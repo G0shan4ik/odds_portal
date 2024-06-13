@@ -30,9 +30,9 @@ def get_start_url(data):
 
 @browser(
     user_agent=bt.UserAgent.user_agent_106,
-    proxy=PROXY_EGOR
-    # headless=True,
-    # add_arguments=['--disable-dev-shm-usage', '--no-sandbox']
+    proxy=PROXY_EGOR,
+    headless=True,
+    add_arguments=['--disable-dev-shm-usage', '--no-sandbox', '--disable-gpu']
 )
 def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
     try:
