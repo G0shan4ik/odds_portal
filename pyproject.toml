@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "package"
+version = "0.1.0"
+description = ""
+authors = ["Egor <egorkononec64@gmail.com>"]
+
+
+[tool.poetry.dependencies]
+python = "^3.9"
+aiogram = "^3.4.1"
+botasaurus = "^3.2.24"
+python-dotenv = "^1.0.1"
+npm = "^0.1.1"
+peewee = "^3.17.2"
+googletrans = "3.1.0a0"
+python-levenshtein = "^0.25.1"
+
+
+[tool.poetry.scripts]
+dev = "main:start_dev"
+
+[tool.poetry.group.dev.dependencies]
+python = "^3.9"
+botasaurus = "^3.2.24"
+googletrans = "3.1.0a0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
