@@ -119,20 +119,38 @@ def check_predicts(driver: AntiDetectDriver):
         return False
 
 
+def sort_and_transpose_lists(*lists):
+    combined_lists = [list(tup) for tup in zip(*lists)]
+
+    combined_lists.sort(key=lambda x: x[-1])
+
+    transposed = list(zip(*combined_lists))
+    transposed = [list(tup) for tup in transposed]
+
+    return [list(tup) for tup in list(zip(*transposed))]
+
+
 def get_pick_coefficient(card: BeautifulSoup) -> list:
     result = []
     X = [item.text for item in card.select(
         'div.border-black-borders.flex.min-h-\[30px\].min-w-\[60px\].items-center.justify-center.border-l')]
-    pick_coefficient = [item.text for item in card.select(
+    coefficient = [float(item.text.replace('%', '')) for item in card.select(
         'div.border-black-borders.flex.min-w-\[60px\].flex-col.items-center.justify-center.gap-1.border-l.pb-1.pt-1')]
-    pick_x = dict(zip(X, pick_coefficient))
+    pick_x = dict(zip(X, coefficient))
 
-    for k, v in pick_x.items():
-        if 'PICK' in v:
-            result.append(k)
-            result.append(v.split('%')[0])
-            break
-    return result
+    try:
+        for k, v in pick_x.items():
+            if 'PICK' in v:
+                result.append(k)
+                result.append(v.split('%')[0])
+                break
+        return result
+    except:
+        pick = [int(item.text.replace('%', '')) for item in card.select(
+            'div.border-black-main.min-sm\:min-h-\[26px\].min-sm\:min-w-\[80\%\].relative.flex.min-h-\[40px\].min-w-\[50px\].items-center.justify-start.border')]
+        print(sort_and_transpose_lists(X, coefficient, pick)[-1])
+        return sort_and_transpose_lists(X, coefficient, pick)[-1][:-1]
+
 
 def check_correct_keywords(true_words: list[str], predicted_words: list[str]) -> bool:
     flag = True
@@ -207,7 +225,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[str], _user_id: int, 
                     true_words=[item.lower().replace(" ", '') for item in keywords],
                     predicted_words=[item.lower().replace(" ", '') for item in card.select_one('div.flex').text.split('/')]):
                 continue
-
+            print(_pick)
             res_bet = making_bet(_pick[0], card.select_one('span.text-gray-dark').text)
             if res_bet == 'stop':
                 continue
@@ -335,13 +353,12 @@ def get_info(clear_bids, res) -> int:
 
 def make_bet(driver: AntiDetectDriver, data, dct, new_bet) -> bool:
     from uuid import uuid4
-    cnt = 0.08
-    while cnt < 2.4:
+    cnt = 0.1
+    while cnt < 3:
         for idx in range(len(data)):
             coefficient = dct['coefficient']
             bet, coefficient_kush = data[idx].text.split('\n')
-            print(coefficient_kush, coefficient, ' --- ', new_bet.lower(), bet.lower(), '---', cnt, float(coefficient) + cnt)
-            if new_bet.lower() in bet.lower() and float(coefficient) - 0.08 <= float(coefficient_kush) <= float(coefficient) + cnt:
+            if new_bet.lower() in bet.lower() and float(coefficient) - 0.05 <= float(coefficient_kush) <= float(coefficient) + cnt:
                 driver.sleep(uniform(1, 2))
                 btn = data[idx].find_element(By.CSS_SELECTOR, 'a.coefLink.d-inline-block.px-0.px-sm-3.addCoupon')
                 btn.click()

@@ -8,10 +8,19 @@ from .helpers import *
 from package.database import LinksBetters
 from .kush_parser import get_result
 
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
+
+PROXY_RUSLAN = os.getenv('PROXY_RUSLAN')
+
 
 @browser(
     user_agent=bt.UserAgent.user_agent_106,
     reuse_driver=True,
+    # proxy=PROXY_RUSLAN,
     headless=True,
     add_arguments=['--disable-dev-shm-usage', '--no-sandbox', '--disable-gpu']
 )
@@ -45,7 +54,7 @@ async def schedule():
     loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
     while True:
         try:
-            await asyncio.sleep(1)
+            await asyncio.sleep(30)
             _select: list[LinksBetters] = LinksBetters.select()
             processes: [Awaitable] = []
 
@@ -57,7 +66,7 @@ async def schedule():
             for items in chunks(processes, 5):
                 await asyncio.gather(*items)
 
-            await asyncio.sleep(60)
+            await asyncio.sleep(100)
         except Exception as ex:
             print(f"<-- Schedule err: {ex} -->")
             await asyncio.sleep(360)
