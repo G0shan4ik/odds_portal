@@ -360,7 +360,7 @@ def make_bet(driver: AntiDetectDriver, data, dct, new_bet) -> bool:
         for idx in range(len(data)):
             coefficient = dct['coefficient']
             bet, coefficient_kush = data[idx].text.split('\n')
-            if new_bet.lower() in bet.lower() and float(coefficient) - 0.05 <= float(coefficient_kush) <= float(coefficient) + cnt:
+            if new_bet.lower() in bet.lower() and float(coefficient) - 0.09 <= float(coefficient_kush) <= float(coefficient) + cnt:
                 driver.sleep(uniform(1, 2))
                 btn = data[idx].find_element(By.CSS_SELECTOR, 'a.coefLink.d-inline-block.px-0.px-sm-3.addCoupon')
                 btn.click()
