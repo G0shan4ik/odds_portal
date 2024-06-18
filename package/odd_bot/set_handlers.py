@@ -39,3 +39,5 @@ async def catch_nickname(message: Message):
             reply_markup=in_list_kb(name=data[0]),
         )
 
+    await message.answer(f'Общее количество бетторов = {len(all_data)}')
+
