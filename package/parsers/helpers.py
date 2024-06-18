@@ -48,7 +48,8 @@ def levenshtein_similarity(str1: str, str2: str) -> float:
     return (max_len - distance) / max_len
 
 def check_command(str1: str, str2: str) -> bool:
-    str1, str2 = str1.lower(), str2.lower()
+    str1 = str1.lower().replace('(жен)', '').replace(' ', '')
+    str2 = str2.lower().replace('(ж)', '').replace(' ', '')
     return True if (
             float(f"{levenshtein_similarity(str1, str2):.2f}") >= 0.67 or
             float(f"{jaccard_similarity(str1, str2):.2f}") >= 0.5
@@ -134,22 +135,23 @@ def get_pick_coefficient(card: BeautifulSoup) -> list:
     result = []
     X = [item.text for item in card.select(
         'div.border-black-borders.flex.min-h-\[30px\].min-w-\[60px\].items-center.justify-center.border-l')]
-    coefficient = [float(item.text.replace('%', '')) for item in card.select(
+    coefficient = [item.text for item in card.select(
         'div.border-black-borders.flex.min-w-\[60px\].flex-col.items-center.justify-center.gap-1.border-l.pb-1.pt-1')]
     pick_x = dict(zip(X, coefficient))
 
-    try:
-        for k, v in pick_x.items():
-            if 'PICK' in v:
-                result.append(k)
-                result.append(v.split('%')[0])
-                break
-        return result
-    except:
-        pick = [int(item.text.replace('%', '')) for item in card.select(
-            'div.border-black-main.min-sm\:min-h-\[26px\].min-sm\:min-w-\[80\%\].relative.flex.min-h-\[40px\].min-w-\[50px\].items-center.justify-start.border')]
-        print(sort_and_transpose_lists(X, coefficient, pick)[-1])
-        return sort_and_transpose_lists(X, coefficient, pick)[-1][:-1]
+    for k, v in pick_x.items():
+        if 'PICK' in v:
+            result.append(k)
+            result.append(v.split('%')[0])
+            break
+    return result
+    # pick = [int(item.text.replace('%', '')) for item in card.select(
+    #     'div.border-black-main.min-sm\:min-h-\[26px\].min-sm\:min-w-\[80\%\].relative.flex.min-h-\[40px\].min-w-\[50px\].items-center.justify-start.border')]
+    # return sort_and_transpose_lists(
+    #     X,
+    #     list(map(lambda item: float(item.replace('%', '')), coefficient)),
+    #     pick
+    # )[-1][:-1]
 
 
 def check_correct_keywords(true_words: list[str], predicted_words: list[str]) -> bool:
@@ -304,7 +306,7 @@ def put_or_not(card: BeautifulSoup, date, sport, bet_cm) -> bool:
 
     data = card.select_one('a.notUnderlineHover').get('title')
     tm_and_dt = card.find('div', class_='d-block d-sm-inline-block time-event').text.replace('\n', '').split(' ')
-    if tm_and_dt[-1] == 'Live' or tm_and_dt[0] == 'Через':
+    if tm_and_dt[-1] == 'Live' or 'назад' in tm_and_dt or 'Вчера' in tm_and_dt:
         return False
 
     _command = re.findall(
@@ -354,7 +356,7 @@ def get_info(clear_bids, res) -> int:
 def make_bet(driver: AntiDetectDriver, data, dct, new_bet) -> bool:
     from uuid import uuid4
     cnt = 0.1
-    while cnt < 3:
+    while cnt < 7:
         for idx in range(len(data)):
             coefficient = dct['coefficient']
             bet, coefficient_kush = data[idx].text.split('\n')
@@ -386,7 +388,7 @@ def make_bet(driver: AntiDetectDriver, data, dct, new_bet) -> bool:
                 print('<--------  WIN  -------->\n\n\n')
 
                 return True
-        cnt += 0.07
+        cnt += 0.08
     return False
 
 # <-- /Kush pars helpers -->

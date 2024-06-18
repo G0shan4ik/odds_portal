@@ -40,9 +40,7 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
 
         dct = literal_eval(data[1])
         print(dct)
-        driver.refresh()
         driver.get(data[0])
-        driver.refresh()
         driver.sleep(1)
 
         # <-- sign in kush -->
@@ -70,13 +68,16 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
             soup: BeautifulSoup = driver.bs4()
             all_cards = soup.select_one('div[id="list-events"]').select('div.event-block.border-block.mb-3')
         flag = False
-
+        cnt = 0
         for card in all_cards:
+            cnt += 1
             if put_or_not(card=card, date=dct['timeStart'], sport=dct['sport'], bet_cm=dct['players']):
                 flag = True
                 link = card.select_one('a.addBetsButton').get('href')
                 driver.get(f"https://kushvsporte.ru{link}")
                 driver.sleep(uniform(1, 2))
+                break
+            elif cnt > 7:
                 break
 
         if not flag:
@@ -87,12 +88,12 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
         driver.execute_script('window.scrollTo(0, 808)')
         driver.sleep(uniform(2, 4))
         try:
-            driver.sleep(uniform(1, 2))
+            driver.sleep(uniform(5, 7))
             driver.find_element(
                 By.CSS_SELECTOR,
                 'a.w-100.mb-3.load-cf-list.greenButton.d-block.greenBackground.text-center.white').click()
         except:
-            driver.sleep(20)
+            driver.sleep(14)
             driver.find_element(
                 By.CSS_SELECTOR,
                 'a.w-100.mb-3.load-cf-list.greenButton.d-block.greenBackground.text-center.white').click()

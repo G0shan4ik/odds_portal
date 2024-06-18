@@ -14,13 +14,14 @@ import os
 
 load_dotenv()
 
-PROXY_RUSLAN = os.getenv('PROXY_RUSLAN')
+PROXY_ODDS = os.getenv('PROXY_ODDS')
 
 
 @browser(
     user_agent=bt.UserAgent.user_agent_106,
     reuse_driver=True,
-    # proxy=PROXY_RUSLAN,
+    proxy=PROXY_ODDS,
+    max_retry=3,
     headless=True,
     add_arguments=['--disable-dev-shm-usage', '--no-sandbox', '--disable-gpu']
 )
@@ -29,7 +30,7 @@ def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
 
     # <-- LOGIN TO PORTAL -->
     login_odds(driver=driver, url=url)
-    driver.sleep(round(uniform(1.5, 3.5), 3))
+    driver.sleep(round(uniform(2, 3.5), 3))
     # <-- /LOGIN TO PORTAL -->
 
     # <-- CHECK PREDICTS -->
@@ -54,7 +55,7 @@ async def schedule():
     loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
     while True:
         try:
-            await asyncio.sleep(30)
+            await asyncio.sleep(10)
             _select: list[LinksBetters] = LinksBetters.select()
             processes: [Awaitable] = []
 
@@ -63,7 +64,7 @@ async def schedule():
                     user_id = item.user_id
                     processes.append(pars_manager(item=item, user_id=user_id, loop=loop))
 
-            for items in chunks(processes, 5):
+            for items in chunks(processes, 10):
                 await asyncio.gather(*items)
 
             await asyncio.sleep(100)
