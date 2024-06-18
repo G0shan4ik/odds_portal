@@ -14,14 +14,14 @@ import os
 load_dotenv()
 
 
-# LOGIN_KUSH_RUSLAN = os.getenv('LOGIN_KUSH_RUSLAN')
-# PASS_KUSH_RUSLAN = os.getenv('PASS_KUSH_RUSLAN')
-# PROXY_RUSLAN = os.getenv('PROXY_RUSLAN')
+LOGIN_KUSH_RUSLAN = os.getenv('LOGIN_KUSH_RUSLAN')
+PASS_KUSH_RUSLAN = os.getenv('PASS_KUSH_RUSLAN')
+PROXY_RUSLAN = os.getenv('PROXY_RUSLAN')
 
 
-LOGIN_KUSH_EGOR = os.getenv('LOGIN_KUSH_EGOR')
-PASS_KUSH_EGOR = os.getenv('PASS_KUSH_EGOR')
-PROXY_EGOR = os.getenv('PROXY_EGOR')
+# LOGIN_KUSH_EGOR = os.getenv('LOGIN_KUSH_EGOR')
+# PASS_KUSH_EGOR = os.getenv('PASS_KUSH_EGOR')
+# PROXY_EGOR = os.getenv('PROXY_EGOR')
 
 
 def get_start_url(data):
@@ -30,7 +30,7 @@ def get_start_url(data):
 
 @browser(
     user_agent=bt.UserAgent.user_agent_106,
-    proxy=PROXY_EGOR,
+    proxy=PROXY_RUSLAN,
     headless=True,
     add_arguments=['--disable-dev-shm-usage', '--no-sandbox', '--disable-gpu']
 )
@@ -159,9 +159,9 @@ async def get_result(loop: asyncio.AbstractEventLoop, forks: list[dict]) -> None
             # pass_kush = PASS_KUSH_RUSLAN
             # proxy_kush = PROXY_RUSLAN
             # if fork['eg_or_rus'] == 'егор':
-            login_kush = LOGIN_KUSH_EGOR
-            pass_kush = PASS_KUSH_EGOR
-            proxy_kush = PROXY_EGOR
+            login_kush = LOGIN_KUSH_RUSLAN
+            pass_kush = PASS_KUSH_RUSLAN
+            proxy_kush = PROXY_RUSLAN
 
             if isinstance(fork, dict):
                 player = text_translator(text=fork["players"]).capitalize()
