@@ -175,7 +175,12 @@ def count_coef_by_formula(user_id: int, name: str, coef_portal: float) -> float:
 
 
 def making_bet(bet: str, descr_ods_bet: str, keywords: list[str]) -> str:
-    if descr_ods_bet.lower() not in list(map(lambda item: item.lower(), keywords)):
+    fl = False
+    for item in descr_ods_bet.lower().split():
+        if item in list(map(lambda i: i.lower(), keywords)):
+            fl = True
+            break
+    if not fl:
         return 'stop'
 
     if 'O/U' in descr_ods_bet:
