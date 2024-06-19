@@ -25,7 +25,7 @@ odds_login = os.getenv('odds_login')
 
 
 # <-- Helpers -->
-def check_null_kw(keywords: list[str]) -> bool:
+def check_null_kw(keywords: list[list]) -> bool:
     if len(keywords) == 1:
         return True if keywords[0] else False
     return True
@@ -154,13 +154,22 @@ def get_pick_coefficient(card: BeautifulSoup) -> list:
     # )[-1][:-1]
 
 
-def check_correct_keywords(true_words: list[str], predicted_words: list[str]) -> bool:
+def check_correct_keywords(true_words: list[list], predicted_words: list[str], descr_ods_bet: str) -> bool:
+    print(true_words, predicted_words, descr_ods_bet, sep=' --- ')
     flag = True
-    for keyword in true_words:
-        if keyword in predicted_words:
-            continue
-        else:
+    for group in true_words:
+        fl = True
+        for keyword in group:
+            if (keyword.lower() in [item.lower() for item in predicted_words]) or (keyword.lower() in descr_ods_bet.lower()):
+                continue
+            else:
+                fl = False
+                break
+
+        if not fl:
             flag = False
+        else:
+            flag = True
             break
     return flag
 
@@ -174,15 +183,7 @@ def count_coef_by_formula(user_id: int, name: str, coef_portal: float) -> float:
         return res_coef
 
 
-def making_bet(bet: str, descr_ods_bet: str, keywords: list[str]) -> str:
-    fl = False
-    for item in descr_ods_bet.lower().split():
-        if item in list(map(lambda i: i.lower(), keywords)):
-            fl = True
-            break
-    if not fl:
-        return 'stop'
-
+def making_bet(bet: str, descr_ods_bet: str) -> str:
     if 'O/U' in descr_ods_bet:
         return 'тб' if bet == 'Over' else 'тм'
     elif '1X2' in descr_ods_bet or 'DC' in descr_ods_bet or 'H/A' in descr_ods_bet:
@@ -200,7 +201,7 @@ def making_bet(bet: str, descr_ods_bet: str, keywords: list[str]) -> str:
         return 'stop'
 
 
-def pars_predicts(driver: AntiDetectDriver, keywords: list[str], _user_id: int, bettor_name: str) -> list[dict]:
+def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int, bettor_name: str) -> list[dict]:
     result: list[dict] = list()
     driver.execute_script('window.scrollTo(0, 1666)')
     driver.sleep(1.1111)
@@ -232,11 +233,12 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[str], _user_id: int, 
             if _select.exists():
                 continue
             if check_null_kw(keywords) and not check_correct_keywords(
-                    true_words=[item.lower().replace(" ", '') for item in keywords],
-                    predicted_words=[item.lower().replace(" ", '') for item in card.select_one('div.flex').text.split('/')]):
+                true_words=keywords,
+                predicted_words=[item.lower().replace(" ", '') for item in card.select_one('div.flex').text.split('/')],
+                descr_ods_bet=card.select_one('span.text-gray-dark').text
+            ):
                 continue
-            print(_pick)
-            res_bet = making_bet(_pick[0], card.select_one('span.text-gray-dark').text, keywords)
+            res_bet = making_bet(_pick[0], card.select_one('span.text-gray-dark').text)
             if res_bet == 'stop':
                 continue
 

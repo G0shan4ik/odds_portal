@@ -27,6 +27,7 @@ PROXY_ODDS = os.getenv('PROXY_ODDS')
 )
 def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
     url, keywords, _user_id, bettor_name = data.split('#')
+    print(literal_eval(keywords))
 
     # <-- LOGIN TO PORTAL -->
     login_odds(driver=driver, url=url)
@@ -44,7 +45,7 @@ def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
 
 
 async def pars_manager(item: LinksBetters, user_id: int, loop: asyncio.AbstractEventLoop):
-    url = f'{item.link}#{item.keyword.split(" | ")}#{user_id}#{item.better_nickname}'
+    url = f'{item.link}#{item.keyword}#{user_id}#{item.better_nickname}'
     data: list[dict] = await loop.run_in_executor(None, pars_odds, url)
     await asyncio.sleep(1)
     if data:
@@ -55,7 +56,7 @@ async def schedule():
     loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
     while True:
         try:
-            await asyncio.sleep(100)
+            # await asyncio.sleep(100)
             _select: list[LinksBetters] = LinksBetters.select()
             processes: [Awaitable] = []
 
