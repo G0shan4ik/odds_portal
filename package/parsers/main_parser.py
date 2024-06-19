@@ -21,13 +21,12 @@ PROXY_ODDS = os.getenv('PROXY_ODDS')
     user_agent=bt.UserAgent.user_agent_106,
     reuse_driver=True,
     proxy=PROXY_ODDS,
-    max_retry=3,
+    max_retry=2,
     headless=True,
     add_arguments=['--disable-dev-shm-usage', '--no-sandbox', '--disable-gpu']
 )
 def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
     url, keywords, _user_id, bettor_name = data.split('#')
-    print(literal_eval(keywords))
 
     # <-- LOGIN TO PORTAL -->
     login_odds(driver=driver, url=url)
@@ -56,7 +55,7 @@ async def schedule():
     loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
     while True:
         try:
-            # await asyncio.sleep(100)
+            await asyncio.sleep(120)
             _select: list[LinksBetters] = LinksBetters.select()
             processes: [Awaitable] = []
 
@@ -68,7 +67,7 @@ async def schedule():
             for items in chunks(processes, 10):
                 await asyncio.gather(*items)
 
-            await asyncio.sleep(150)
+            await asyncio.sleep(180)
         except Exception as ex:
             print(f"<-- Schedule err: {ex} -->")
             await asyncio.sleep(360)
