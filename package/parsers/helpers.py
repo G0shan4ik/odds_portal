@@ -174,7 +174,10 @@ def count_coef_by_formula(user_id: int, name: str, coef_portal: float) -> float:
         return res_coef
 
 
-def making_bet(bet: str, descr_ods_bet: str) -> str:
+def making_bet(bet: str, descr_ods_bet: str, keywords: list[str]) -> str:
+    if descr_ods_bet.lower() not in list(map(lambda item: item.lower(), keywords)):
+        return 'stop'
+
     if 'O/U' in descr_ods_bet:
         return 'тб' if bet == 'Over' else 'тм'
     elif '1X2' in descr_ods_bet or 'DC' in descr_ods_bet or 'H/A' in descr_ods_bet:
@@ -228,7 +231,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[str], _user_id: int, 
                     predicted_words=[item.lower().replace(" ", '') for item in card.select_one('div.flex').text.split('/')]):
                 continue
             print(_pick)
-            res_bet = making_bet(_pick[0], card.select_one('span.text-gray-dark').text)
+            res_bet = making_bet(_pick[0], card.select_one('span.text-gray-dark').text, keywords)
             if res_bet == 'stop':
                 continue
 
