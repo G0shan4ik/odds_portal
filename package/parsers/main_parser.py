@@ -55,7 +55,7 @@ async def schedule():
     loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
     while True:
         try:
-            await asyncio.sleep(10)
+            await asyncio.sleep(100)
             _select: list[LinksBetters] = LinksBetters.select()
             processes: [Awaitable] = []
 
@@ -67,7 +67,7 @@ async def schedule():
             for items in chunks(processes, 10):
                 await asyncio.gather(*items)
 
-            await asyncio.sleep(100)
+            await asyncio.sleep(150)
         except Exception as ex:
             print(f"<-- Schedule err: {ex} -->")
             await asyncio.sleep(360)
