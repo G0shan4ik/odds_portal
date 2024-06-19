@@ -1,4 +1,5 @@
 from package.database import *
+from ast import literal_eval
 
 
 def save_data_to_database(_user_id: int, nickname: str, link: str) -> LinksBetters:
@@ -19,14 +20,14 @@ def delete_user_data(user_id: int, nickname: str) -> bool:
 
 def get_all_data(user_id: int) -> list[list]:
     _select = LinksBetters.select().where(LinksBetters.user == user_id)
-    return [[item.better_nickname, item.roi, item.keyword] for item in _select]
+    return [[item.better_nickname, item.roi, literal_eval(item.keyword)] for item in _select]
 
 
 def check_current_keywords(user_id: int, name: str):
     _select = LinksBetters.select().where(
         LinksBetters.user == user_id,
         LinksBetters.better_nickname == name,
-        LinksBetters.keyword != '')
+        LinksBetters.keyword != '[""]')
     return True if _select else False
 
 def check_current_roi(user_id: int, name: str):
@@ -50,10 +51,10 @@ def delete_bettor(user_id: int, name: str):
         return False
 
 
-def add_keys(user_id: int, name: str, keys: list[str]):
+def add_keys(user_id: int, name: str, keys: str):
     try:
         user: LinksBetters = LinksBetters.get_or_create(user=user_id, better_nickname=name, current_better=True)[0]
-        user.keyword = '|'.join(keys) if keys[0] != '1' else ''
+        user.keyword = keys if keys != "[['1']]" else '[""]'
         user.save()
         return True
     except Exception as ex:

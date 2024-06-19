@@ -64,12 +64,12 @@ async def state_add_nickname(message: Message, state: FSMContext):
 @router.message(CatchData.enter_keys, F.text)
 async def state_enter_keywords(message: Message, state: FSMContext):
     _name = return_bettors_name(message.from_user.id)
-    _keys: list = message.text.replace(' ', '').split(',')
+    _keys: str = f"{list(map(lambda item: [i.strip() for i in item.split(',')], message.text.split('+')))}"
 
     add_keys(user_id=message.from_user.id, name=_name, keys=_keys)
     set_current_better(user_id=message.from_user.id, name=_name, t_or_f=False)
     await message.answer(
-        text=SUCCESS_ENTER_KEYS_TEXT(_name) if _keys[0] != '1' else SUCCESS_DELETE_KEYS_TEXT(_name),
+        text=SUCCESS_ENTER_KEYS_TEXT(_name) if message.text != "1" else SUCCESS_DELETE_KEYS_TEXT(_name),
         reply_markup=start_kb()
     )
     await state.clear()

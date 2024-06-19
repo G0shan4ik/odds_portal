@@ -29,7 +29,7 @@ class LinksBetters(BaseModel):
     user = ForeignKeyField(Users)
     better_nickname = TextField(default='', null=False)
     link = TextField(default='', null=False)
-    keyword = TextField(default='', null=True)
+    keyword = TextField(default='[""]', null=True)
     current_better = BooleanField(default=False)
     on_off = BooleanField(default=False)
     roi = IntegerField(default=-1111)

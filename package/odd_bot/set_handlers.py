@@ -24,6 +24,7 @@ async def catch_nickname(message: Message):
         message_id=message.message_id
     )
     all_data: list[list] = get_all_data(user_id=message.from_user.id)
+    print(all_data)
     if not all_data:
         await message.answer(
             text=NO_INSTALLED_BETTORS_TEXT,
@@ -33,9 +34,9 @@ async def catch_nickname(message: Message):
     await message.answer(hbold('Вот список ваших бетторов ⬇️'))
     for data in all_data:
         await message.answer(
-            text=f'{hbold("👤 Bettors name: ")}{hbold(data[0])}.\n' \
-                 f'{hbold("• Keywords: ")}{data[-1] if check_current_keywords(user_id=message.from_user.id ,name=data[0]) else "No KEYWORDS."}\n' \
-                 f'{hbold("• ROI: ")}{data[1] if check_current_roi(user_id=message.from_user.id ,name=data[0]) else "No ROI."}',
+            text=f'{hbold("👤 Bettors name:  ")}{hbold(data[0])}.\n' \
+                 f'''{hbold("• Keywords:  ")}{" + ".join([', '.join(item) for item in data[-1]]) if check_current_keywords(user_id=message.from_user.id ,name=data[0]) else "No KEYWORDS."}\n''' \
+                 f'{hbold("• ROI:  ")}{data[1] if check_current_roi(user_id=message.from_user.id ,name=data[0]) else "No ROI."}',
             reply_markup=in_list_kb(name=data[0]),
         )
 
