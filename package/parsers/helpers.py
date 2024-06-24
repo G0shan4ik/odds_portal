@@ -132,19 +132,22 @@ def sort_and_transpose_lists(*lists):
 
 
 def get_pick_coefficient(card: BeautifulSoup) -> list:
-    result = []
-    X = [item.text for item in card.select(
-        'div.border-black-borders.flex.min-h-\[30px\].min-w-\[60px\].items-center.justify-center.border-l')]
-    coefficient = [item.text for item in card.select(
-        'div.border-black-borders.flex.min-w-\[60px\].flex-col.items-center.justify-center.gap-1.border-l.pb-1.pt-1')]
-    pick_x = dict(zip(X, coefficient))
+    try:
+        result = []
+        X = [item.text for item in card.select(
+            'div.border-black-borders.flex.min-h-\[30px\].min-w-\[60px\].items-center.justify-center.border-l')]
+        coefficient = [item.text for item in card.select(
+            'div.border-black-borders.flex.min-w-\[60px\].flex-col.items-center.justify-center.gap-1.border-l.pb-1.pt-1')]
+        pick_x = dict(zip(X, coefficient))
 
-    for k, v in pick_x.items():
-        if 'PICK' in v:
-            result.append(k)
-            result.append(v.split('%')[0])
-            break
-    return result
+        for k, v in pick_x.items():
+            if 'PICK' in v:
+                result.append(k)
+                result.append(v.split('%')[0])
+                break
+        return result
+    except:
+        return []
     # pick = [int(item.text.replace('%', '')) for item in card.select(
     #     'div.border-black-main.min-sm\:min-h-\[26px\].min-sm\:min-w-\[80\%\].relative.flex.min-h-\[40px\].min-w-\[50px\].items-center.justify-start.border')]
     # return sort_and_transpose_lists(
