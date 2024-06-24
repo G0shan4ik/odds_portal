@@ -15,7 +15,7 @@ async def on_startup(dispatcher):
     for item in Users.select():
         await bot_.send_message(
             chat_id=item.user_id,
-            text=hbold('Бот запущен! 🥲')
+            text=hbold('Бот снова запущен!')
         )
 
 
@@ -23,7 +23,8 @@ async def on_shutdown(dispatcher):
     for item in Users.select():
         await bot_.send_message(
             chat_id=item.user_id,
-            text=hbold('Бот остановлен 😥, дла проведения технических работ!')
+            text=hbold('Бот остановлен 😥, дла проведения технических работ!\n'
+                       'Это не займёт много времени)')
         )
 
 
