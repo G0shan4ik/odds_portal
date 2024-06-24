@@ -30,7 +30,7 @@ def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
 
     # <-- LOGIN TO PORTAL -->
     login_odds(driver=driver, url=url)
-    driver.sleep(round(uniform(2, 3.5), 3))
+    driver.sleep(round(uniform(4, 7), 3))
     # <-- /LOGIN TO PORTAL -->
 
     # <-- CHECK PREDICTS -->

@@ -97,7 +97,7 @@ def convert_date(date_str: str) -> str:
 # <-- Pars helpers -->
 def login_odds(driver: AntiDetectDriver, url: str) -> AntiDetectDriver:
     driver.get(url)
-    driver.sleep(1)
+    driver.sleep(5)
 
     driver.click('div.loginModalBtn')
     driver.sleep(round(uniform(1, 2), 1))
