@@ -32,7 +32,7 @@ def get_start_url(data):
     user_agent=bt.UserAgent.user_agent_106,
     proxy=PROXY_RUSLAN,
     headless=True,
-    add_arguments=['--disable-dev-shm-usage', '--no-sandbox', '--disable-gpu']
+    add_arguments=['--disable-dev-shm-usage', '--no-sandbox']
 )
 def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
     try:

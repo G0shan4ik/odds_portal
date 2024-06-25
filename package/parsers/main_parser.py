@@ -23,7 +23,7 @@ PROXY_ODDS = os.getenv('PROXY_ODDS')
     proxy=PROXY_ODDS,
     max_retry=2,
     headless=True,
-    add_arguments=['--disable-dev-shm-usage', '--no-sandbox', '--disable-gpu']
+    add_arguments=['--disable-dev-shm-usage', '--no-sandbox']
 )
 def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
     url, keywords, _user_id, bettor_name = data.split('#')
@@ -71,3 +71,5 @@ async def schedule():
         except Exception as ex:
             print(f"<-- Schedule err: {ex} -->")
             await asyncio.sleep(360)
+            loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
+
