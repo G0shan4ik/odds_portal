@@ -307,6 +307,19 @@ def check_command_2(kush_cm, bet_cm) -> bool:
         return True
     return False
 
+
+def check_date(odds: str, kush: str):
+    # Преобразуем строку в объект datetime
+    time_odds = datetime.strptime(odds, '%H:%M')
+    time_kush = datetime.strptime(kush, '%H:%M')
+
+    if time_odds.hour == time_kush.hour:
+        return True
+
+    if time_odds - timedelta(hours=1.5) <= time_kush <= time_odds + timedelta(hours=2.5):
+        return True
+    return False
+
 def put_or_not(card: BeautifulSoup, date_odds, sport, bet_cm) -> bool:
 
     sport = text_translator(text=sport).capitalize()
@@ -321,9 +334,11 @@ def put_or_not(card: BeautifulSoup, date_odds, sport, bet_cm) -> bool:
     data = card.select_one('a.notUnderlineHover').get('title')
     tm_and_dt = card.find('div', class_='d-block d-sm-inline-block time-event').text.replace('\n', '').split(' ')
 
-    print(f'\n\ndate odds : {date_odds}\ndate kush: {tm_and_dt}')
 
     if tm_and_dt[-1] == 'Live' or 'назад' in tm_and_dt or 'Вчера' in tm_and_dt:
+        return False
+
+    if not check_date(odds=date_odds.split()[0], kush=tm_and_dt[-1]):
         return False
 
     _command = re.findall(

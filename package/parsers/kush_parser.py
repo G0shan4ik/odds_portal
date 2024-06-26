@@ -71,7 +71,7 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
         cnt = 0
         for card in all_cards:
             cnt += 1
-            if put_or_not(card=card, date=dct['timeStart'], sport=dct['sport'], bet_cm=dct['players']):
+            if put_or_not(card=card, date_odds=dct['timeStart'], sport=dct['sport'], bet_cm=dct['players']):
                 flag = True
                 link = card.select_one('a.addBetsButton').get('href')
                 driver.get(f"https://kushvsporte.ru{link}")
