@@ -1,4 +1,4 @@
-FROM chetan1111/botasaurus:latest
+FROM chetan1111/botasaurus:3
 
 WORKDIR /app
 RUN pip install poetry

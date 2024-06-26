@@ -55,7 +55,7 @@ async def schedule():
     loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
     while True:
         try:
-            await asyncio.sleep(120)
+            await asyncio.sleep(40)
             _select: list[LinksBetters] = LinksBetters.select()
             processes: [Awaitable] = []
 
