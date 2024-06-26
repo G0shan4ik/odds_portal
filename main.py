@@ -11,21 +11,21 @@ from package.odd_bot.core import bot_, dp
 from package.parsers.main_parser import schedule
 
 
-async def on_startup(dispatcher):
-    for item in Users.select():
-        await bot_.send_message(
-            chat_id=item.user_id,
-            text=hbold('Бот снова запущен!')
-        )
-
-
-async def on_shutdown(dispatcher):
-    for item in Users.select():
-        await bot_.send_message(
-            chat_id=item.user_id,
-            text=hbold('Бот остановлен 😥, дла проведения технических работ!\n'
-                       'Это не займёт много времени)')
-        )
+# async def on_startup(dispatcher):
+#     for item in Users.select():
+#         await bot_.send_message(
+#             chat_id=item.user_id,
+#             text=hbold('Бот снова запущен!')
+#         )
+#
+#
+# async def on_shutdown(dispatcher):
+#     for item in Users.select():
+#         await bot_.send_message(
+#             chat_id=item.user_id,
+#             text=hbold('Бот остановлен 😥, дла проведения технических работ!\n'
+#                        'Это не займёт много времени)')
+#         )
 
 
 async def main():

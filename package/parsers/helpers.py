@@ -307,7 +307,8 @@ def check_command_2(kush_cm, bet_cm) -> bool:
         return True
     return False
 
-def put_or_not(card: BeautifulSoup, date, sport, bet_cm) -> bool:
+def put_or_not(card: BeautifulSoup, date_odds, sport, bet_cm) -> bool:
+
     sport = text_translator(text=sport).capitalize()
 
     if re.search(r"[a-zA-Z]", sport):
@@ -319,6 +320,9 @@ def put_or_not(card: BeautifulSoup, date, sport, bet_cm) -> bool:
 
     data = card.select_one('a.notUnderlineHover').get('title')
     tm_and_dt = card.find('div', class_='d-block d-sm-inline-block time-event').text.replace('\n', '').split(' ')
+
+    print(f'\n\ndate odds : {date_odds}\ndate kush: {tm_and_dt}')
+
     if tm_and_dt[-1] == 'Live' or 'назад' in tm_and_dt or 'Вчера' in tm_and_dt:
         return False
 
