@@ -19,11 +19,10 @@ PROXY_ODDS = os.getenv('PROXY_ODDS')
 
 @browser(
     user_agent=bt.UserAgent.user_agent_106,
-    reuse_driver=True,
     proxy=PROXY_ODDS,
     max_retry=2,
     headless=True,
-    add_arguments=['--disable-dev-shm-usage', '--no-sandbox']
+    add_arguments=['--disable-dev-shm-usage', '--no-sandbox'],
 )
 def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
     url, keywords, _user_id, bettor_name = data.split('#')
