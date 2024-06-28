@@ -44,9 +44,9 @@ def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
 async def pars_manager(item: LinksBetters, user_id: int, loop: asyncio.AbstractEventLoop):
     url = f'{item.link}#{item.keyword}#{user_id}#{item.better_nickname}'
     data: list[dict] = await loop.run_in_executor(None, pars_odds, url)
-    # await asyncio.sleep(1)
-    # if data:
-    #     await get_result(loop=loop, forks=data)
+    await asyncio.sleep(1)
+    if data:
+        await get_result(loop=loop, forks=data)
 
 
 async def schedule():
@@ -57,25 +57,13 @@ async def schedule():
             _select: list[LinksBetters] = LinksBetters.select()
             processes: [Awaitable] = []
 
-            cnt, flag = 0, True
-
             for item in _select:
                 if item.roi > 2 and item.on_off:
                     user_id = item.user_id
                     processes.append(pars_manager(item=item, user_id=user_id, loop=loop))
 
-                    cnt += 1
-                    if cnt >= 3:
-                        for items in chunks(processes, 5):
-                            await asyncio.gather(*items)
-                        flag = False
-                        cnt = 0
-                    else:
-                        flag = True
-
-            if flag:
-                for items in chunks(processes, 5):
-                    await asyncio.gather(*items)
+            for items in chunks(processes, 4):
+                await asyncio.gather(*items)
 
             await asyncio.sleep(get_delay())
         # except Exception as ex:
