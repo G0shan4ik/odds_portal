@@ -32,8 +32,8 @@ async def main():
     await bot_(DeleteWebhook(drop_pending_updates=True))
     init()
 
-    dp.startup.register(on_startup)
-    dp.shutdown.register(on_shutdown)
+    # dp.startup.register(on_startup)
+    # dp.shutdown.register(on_shutdown)
     await asyncio.gather(
         dp.start_polling(bot_),
         schedule()
