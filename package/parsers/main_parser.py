@@ -20,9 +20,8 @@ PROXY_ODDS = os.getenv('PROXY_ODDS')
 @browser(
     user_agent=bt.UserAgent.user_agent_106,
     proxy=PROXY_ODDS,
-    max_retry=2,
-    headless=True,
-    add_arguments=['--disable-dev-shm-usage', '--no-sandbox'],
+    # headless=True,
+    # add_arguments=['--disable-dev-shm-usage', '--no-sandbox'],
 )
 def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
     url, keywords, _user_id, bettor_name = data.split('#')
@@ -45,30 +44,42 @@ def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
 async def pars_manager(item: LinksBetters, user_id: int, loop: asyncio.AbstractEventLoop):
     url = f'{item.link}#{item.keyword}#{user_id}#{item.better_nickname}'
     data: list[dict] = await loop.run_in_executor(None, pars_odds, url)
-    await asyncio.sleep(1)
-    if data:
-        await get_result(loop=loop, forks=data)
+    # await asyncio.sleep(1)
+    # if data:
+    #     await get_result(loop=loop, forks=data)
 
 
 async def schedule():
     loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
     while True:
         # try:
-            await asyncio.sleep(10)
+            await asyncio.sleep(get_delay())
             _select: list[LinksBetters] = LinksBetters.select()
             processes: [Awaitable] = []
+
+            cnt, flag = 0, True
 
             for item in _select:
                 if item.roi > 2 and item.on_off:
                     user_id = item.user_id
                     processes.append(pars_manager(item=item, user_id=user_id, loop=loop))
 
-            for items in chunks(processes, 10):
-                await asyncio.gather(*items)
+                    cnt += 1
+                    if cnt >= 3:
+                        for items in chunks(processes, 5):
+                            await asyncio.gather(*items)
+                        flag = False
+                        cnt = 0
+                    else:
+                        flag = True
 
-            await asyncio.sleep(20)
+            if flag:
+                for items in chunks(processes, 5):
+                    await asyncio.gather(*items)
+
+            await asyncio.sleep(get_delay())
         # except Exception as ex:
         #     print(f"<-- Schedule err: {ex} -->")
-        #     await asyncio.sleep(360)
+        #     await asyncio.sleep(get_delay() + 120)
         #     loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
 
