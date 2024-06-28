@@ -14,7 +14,7 @@ from package.parsers.main_parser import schedule
 async def on_startup(dispatcher):
     for item in Users.select():
         await bot_.send_message(
-            chat_id=item.user_id,
+            chat_id=749654188,
             text=hbold('Бот снова запущен!')
         )
 
@@ -32,7 +32,7 @@ async def main():
     await bot_(DeleteWebhook(drop_pending_updates=True))
     init()
 
-    # dp.startup.register(on_startup)
+    dp.startup.register(on_startup)
     # dp.shutdown.register(on_shutdown)
     await asyncio.gather(
         dp.start_polling(bot_),
