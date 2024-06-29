@@ -97,14 +97,23 @@ def convert_date(date_str: str) -> str:
 # <-- Pars helpers -->
 def login_odds(driver: AntiDetectDriver, url: str) -> AntiDetectDriver:
     driver.get(url)
-    driver.sleep(4)
-
-    driver.click('div.loginModalBtn')
-    driver.sleep(5)
-    driver.find_element(By.CSS_SELECTOR, 'input#login-username-sign.int-text.border-box.border-black-main').send_keys(odds_login)
-    driver.find_element(By.CSS_SELECTOR, 'input#login-password-sign-m.int-text.border-box.border-black-main').send_keys(odds_pass)
-    driver.sleep(1)
-    driver.click('input.font-secondary.text-black-main.orange-button-gradient')
+    try:
+        driver.sleep(3)
+        driver.click('div.loginModalBtn')
+        driver.sleep(4)
+        driver.find_element(By.CSS_SELECTOR, 'input#login-username-sign.int-text.border-box.border-black-main').send_keys(odds_login)
+        driver.find_element(By.CSS_SELECTOR, 'input#login-password-sign-m.int-text.border-box.border-black-main').send_keys(odds_pass)
+        driver.sleep(1)
+        driver.click('input.font-secondary.text-black-main.orange-button-gradient')
+    except:
+        driver.get('https://www.oddsportal.com/login/')
+        driver.sleep(4)
+        driver.find_element(By.CSS_SELECTOR, 'input#login-username-sign').send_keys(odds_login)
+        driver.find_element(By.CSS_SELECTOR, 'input#login-password-sign').send_keys(odds_pass)
+        driver.sleep(1)
+        driver.click('input[name="login-submit"]')
+        driver.sleep(4)
+        driver.get(url)
 
     return driver
 

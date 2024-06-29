@@ -12,11 +12,10 @@ from package.parsers.main_parser import schedule
 
 
 async def on_startup(dispatcher):
-    for item in Users.select():
-        await bot_.send_message(
-            chat_id=749654188,
-            text=hbold('Бот снова запущен!')
-        )
+    await bot_.send_message(
+        chat_id=749654188,
+        text=hbold('Бот снова запущен!')
+    )
 
 
 async def on_shutdown(dispatcher):
