@@ -37,6 +37,7 @@ class LinksBetters(BaseModel):
 
 class BetControl(BaseModel):
     eg_or_rus = TextField(default='')
+    put_or_not = BooleanField(default=False)
     scaner_name = TextField(default='')
     bettors_name = TextField(default='')
     timeStart = TextField(default='')
