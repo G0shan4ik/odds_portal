@@ -27,7 +27,11 @@ def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
     url, keywords, _user_id, bettor_name = data.split('#')
 
     # <-- LOGIN TO PORTAL -->
-    login_odds(driver=driver, url=url)
+    try:
+        login_odds(driver=driver, url=url)
+    except:
+        driver.sleep(5)
+        return []
     driver.sleep(round(uniform(4, 7), 3))
     # <-- /LOGIN TO PORTAL -->
 
@@ -61,8 +65,10 @@ async def schedule():
                 if item.roi > 2 and item.on_off:
                     user_id = item.user_id
                     processes.append(pars_manager(item=item, user_id=user_id, loop=loop))
+                    await asyncio.sleep(0.01)
 
             for items in chunks(processes, 4):
+                await asyncio.sleep(0.01)
                 await asyncio.gather(*items)
 
             await asyncio.sleep(get_delay())

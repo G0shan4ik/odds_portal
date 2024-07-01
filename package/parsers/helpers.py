@@ -1,6 +1,7 @@
 import re
 from datetime import datetime, timedelta, timezone
 from time import sleep
+from uuid import uuid4
 
 from botasaurus import AntiDetectDriver
 
@@ -97,23 +98,18 @@ def convert_date(date_str: str) -> str:
 # <-- Pars helpers -->
 def login_odds(driver: AntiDetectDriver, url: str) -> AntiDetectDriver:
     driver.get(url)
+    driver.sleep(5)
     try:
-        driver.sleep(3)
         driver.click('div.loginModalBtn')
-        driver.sleep(4)
-        driver.find_element(By.CSS_SELECTOR, 'input#login-username-sign.int-text.border-box.border-black-main').send_keys(odds_login)
-        driver.find_element(By.CSS_SELECTOR, 'input#login-password-sign-m.int-text.border-box.border-black-main').send_keys(odds_pass)
-        driver.sleep(1)
-        driver.click('input.font-secondary.text-black-main.orange-button-gradient')
     except:
-        driver.get('https://www.oddsportal.com/login/')
-        driver.sleep(4)
-        driver.find_element(By.CSS_SELECTOR, 'input#login-username-sign').send_keys(odds_login)
-        driver.find_element(By.CSS_SELECTOR, 'input#login-password-sign').send_keys(odds_pass)
-        driver.sleep(1)
-        driver.click('input[name="login-submit"]')
-        driver.sleep(4)
-        driver.get(url)
+        driver.refresh()
+        driver.sleep(10)
+        driver.click('div.loginModalBtn')
+    driver.sleep(5)
+    driver.find_element(By.CSS_SELECTOR, 'input#login-username-sign.int-text.border-box.border-black-main').send_keys(odds_login)
+    driver.find_element(By.CSS_SELECTOR, 'input#login-password-sign-m.int-text.border-box.border-black-main').send_keys(odds_pass)
+    driver.sleep(1)
+    driver.click('input.font-secondary.text-black-main.orange-button-gradient')
 
     return driver
 
@@ -195,7 +191,7 @@ def count_coef_by_formula(user_id: int, name: str, coef_portal: float) -> float:
         return res_coef
 
 
-def making_bet(bet: str, descr_ods_bet: str) -> str:
+def translate_bet_to_kush(bet: str, descr_ods_bet: str):
     if 'O/U' in descr_ods_bet:
         return 'тб' if bet == 'Over' else 'тм'
     elif '1X2' in descr_ods_bet or 'DC' in descr_ods_bet or 'H/A' in descr_ods_bet:
@@ -211,6 +207,21 @@ def making_bet(bet: str, descr_ods_bet: str) -> str:
             return '1x' if bet.lower() == '1' else '2'
     else:
         return 'stop'
+
+
+def making_bet(bet: str, descr_ods_bet: str, sport: str) -> str:
+    print(f'\nBet: {bet}\nOdds_bet: {descr_ods_bet}\n')
+    if 'Half' in descr_ods_bet:
+        print(sport)
+        period = descr_ods_bet.strip().replace(r'\n', '').split(' ')[1][0]
+        if sport.lower() == 'футбол':
+            return f'!{period}-й тайм {translate_bet_to_kush(bet, descr_ods_bet)}'
+        elif sport.lower() == 'баскетбол':
+            return f'!{period}-я четверть {translate_bet_to_kush(bet, descr_ods_bet)}'
+        elif sport.lower() == 'хоккей':
+            return f'!{period}-й Период {translate_bet_to_kush(bet, descr_ods_bet)}'
+    elif "Half" not in descr_ods_bet:
+        return translate_bet_to_kush(bet, descr_ods_bet) if translate_bet_to_kush(bet, descr_ods_bet) != 'stop' else 'stop'
 
 
 def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int, bettor_name: str) -> list[dict]:
@@ -238,6 +249,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
 
             _select = BetControl.select().where(
                 BetControl.scaner_name == "odds_portal",
+                BetControl.put_or_not is True,
                 BetControl.timeStart == timeStart_,
                 BetControl.players == players_,
                 BetControl.sport == sport_
@@ -250,7 +262,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
                 descr_ods_bet=card.select_one('span.text-gray-dark').text
             ):
                 continue
-            res_bet = making_bet(_pick[0], card.select_one('span.text-gray-dark').text)
+            res_bet = making_bet(_pick[0], card.select_one('span.text-gray-dark').text, sport_)
             if res_bet == 'stop':
                 continue
 
@@ -378,7 +390,6 @@ def put_or_not(card: BeautifulSoup, date_odds, sport, bet_cm) -> bool:
     data = card.select_one('a.notUnderlineHover').get('title')
     tm_and_dt = card.find('div', class_='d-block d-sm-inline-block time-event').text.replace('\n', '').split(' ')
 
-
     if tm_and_dt[-1] == 'Live' or 'назад' in tm_and_dt or 'Вчера' in tm_and_dt:
         return False
 
@@ -412,6 +423,16 @@ def convert(bet: str, sport: str):
     if bet == '1' or bet == '2' or bet == 'x':
         return f"Основные#{bet.upper()}"
 
+    if bet.startswith('!'):
+        bet = bet.replace('!', '')
+        period = bet[0]
+        if sport == 'Футбол':
+            return f"Исходы по таймам#{bet.upper()}"
+        if sport == 'Баскетбол':
+            return f"{period}-я четверть#{bet.upper()}"
+        if sport == 'Хоккей':
+            return f"{period}-й период#{bet.upper()}"
+
     if bet == 'тб' or bet == 'тм':
         return f'Тотал#{bet.upper()}'
     elif (bet == '1x' or bet == 'x2' or bet == '12') and sport not in mass:  # для всех, кроме баскета
@@ -429,13 +450,41 @@ def get_info(clear_bids, res) -> int:
             return idx
 
 
+def choose_true_bet(driver: AntiDetectDriver, data, idx):
+    driver.sleep(uniform(1, 2))
+    btn = data[idx].find_element(By.CSS_SELECTOR, 'a.coefLink.d-inline-block.px-0.px-sm-3.addCoupon')
+    btn.click()
+    driver.sleep(uniform(1, 2))
+    btn2 = driver.find_element(By.ID, 'basketBetLine')
+    btn2.click()
+    driver.sleep(uniform(2, 3))
+
+    slider = driver.find_element(By.XPATH, '//div[contains(@class, "slider-handle min-slider-handle round")]')
+    move = ActionChains(driver)
+    driver.sleep(uniform(2, 3))
+
+    move.click_and_hold(slider).move_by_offset(-70, 0).release().perform()
+    last_btn = driver.find_element(By.CSS_SELECTOR, 'button#add-bet-coupon.btn.btn-blue.w-100.mb-2')
+
+    driver.sleep(3)
+    driver.get_screenshot_as_file(f'all_screen/no_{uuid4}.png')
+
+    last_btn.click()
+
+    driver.sleep(3)
+    driver.get_screenshot_as_file(f'all_screen/yes_{uuid4}.png')
+
+    driver.sleep(3.1415926535)
+    print('<--------  WIN  -------->\n\n\n')
+
 def make_bet(driver: AntiDetectDriver, data, dct, new_bet) -> bool:
-    from uuid import uuid4
     cnt = 0.1
-    while cnt < 7:
+    while cnt < 8:
         for idx in range(len(data)):
             coefficient = dct['coefficient']
             bet, coefficient_kush = data[idx].text.split('\n')
+            # print(f"New bet: <{new_bet.lower()}>  -  Old bet: <{bet.lower()}>  -  {new_bet.lower() in bet.lower()}")
+            # print(f"Coefficient odds: {coefficient}  -  Coefficient kush: {coefficient_kush}  -  {float(coefficient) <= float(coefficient_kush)}")
             if new_bet.lower() in bet.lower() and float(coefficient) - 0.09 <= float(coefficient_kush) <= float(coefficient) + cnt:
                 driver.sleep(uniform(1, 2))
                 btn = data[idx].find_element(By.CSS_SELECTOR, 'a.coefLink.d-inline-block.px-0.px-sm-3.addCoupon')
@@ -445,7 +494,8 @@ def make_bet(driver: AntiDetectDriver, data, dct, new_bet) -> bool:
                 btn2.click()
                 driver.sleep(uniform(2, 3))
 
-                slider = driver.find_element(By.XPATH, '//div[contains(@class, "slider-handle min-slider-handle round")]')
+                slider = driver.find_element(By.XPATH,
+                                             '//div[contains(@class, "slider-handle min-slider-handle round")]')
                 move = ActionChains(driver)
                 driver.sleep(uniform(2, 3))
 
@@ -462,9 +512,14 @@ def make_bet(driver: AntiDetectDriver, data, dct, new_bet) -> bool:
 
                 driver.sleep(3.1415926535)
                 print('<--------  WIN  -------->\n\n\n')
-
                 return True
         cnt += 0.08
+
     return False
 
+
+def put_predict(data: dict):
+    user: BetControl = BetControl.get_or_create(**data)[0]
+    user.put_or_not = True
+    user.save()
 # <-- /Kush pars helpers -->

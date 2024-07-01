@@ -39,7 +39,7 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
         data = data.split('#')
 
         dct = literal_eval(data[1])
-        print(dct)
+
         driver.get(data[0])
         driver.sleep(1)
 
@@ -59,6 +59,11 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
         # <-- /sign in kush -->
         driver.execute_script('window.scrollTo(0, 1666)')
         driver.sleep(uniform(2, 4))
+
+        __dct = dct
+        __dct['players'] = data[-1]
+        put_predict(__dct)  # added predicts
+
         try:
             soup: BeautifulSoup = driver.bs4()
 
@@ -77,7 +82,7 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
                 driver.get(f"https://kushvsporte.ru{link}")
                 driver.sleep(uniform(1, 2))
                 break
-            elif cnt > 7:
+            elif cnt >= 13:
                 break
 
         if not flag:
@@ -114,7 +119,6 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
             sp = driver.bs4()
             clear_bids = sp.find('div', class_='coefBlock').select('a[data-toggle="collapse"]')
             num = get_info(clear_bids, res=result)
-
         bid = driver.find_element(
             By.CSS_SELECTOR,
             'div.coefBlock'
@@ -122,7 +126,6 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
         bid.click()
         try:
             driver.sleep(uniform(4, 7))
-
             data = driver.find_elements(
                 By.CSS_SELECTOR,
                 'div.collapse.show'
@@ -168,8 +171,9 @@ async def get_result(loop: asyncio.AbstractEventLoop, forks: list[dict]) -> None
                 if re.search(r"[a-zA-Z]", player):
                     await asyncio.sleep(uniform(1, 4))
                     player = text_translator(text=player)
+                ang_pl = fork["players"]
                 fork["players"] = player
-                url = f'https://kushvsporte.ru/site/search?q={player}#{fork}#{login_kush}#{pass_kush}'
+                url = f'https://kushvsporte.ru/site/search?q={player}#{fork}#{login_kush}#{pass_kush}#{ang_pl}'
                 await asyncio.sleep(uniform(1, 2))
                 res_mass.append(kush_get_result(url=url, loop=loop, proxy=proxy_kush))
 
