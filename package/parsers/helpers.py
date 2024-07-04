@@ -205,6 +205,8 @@ def translate_bet_to_kush(bet: str, descr_ods_bet: str):
             return bet if bet.lower() == '1' else 'x2'
         elif '+' in descr_ods_bet:
             return '1x' if bet.lower() == '1' else '2'
+        else:
+            return f'ф{bet}'
     else:
         return 'stop'
 
