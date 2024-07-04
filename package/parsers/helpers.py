@@ -515,7 +515,7 @@ def make_bet(driver: AntiDetectDriver, data, dct, new_bet) -> bool:
 
                 driver.sleep(3.1415926535)
 
-                print(f'<--------  WIN  -------->   {dct["players"]}\n\n\n')
+                print(f'<--------  WIN  -------->   {dct["players"]} - {get_correct_current_time()}\n\n\n')
                 return True
         cnt += 0.08
 

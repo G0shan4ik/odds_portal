@@ -61,7 +61,7 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
         # <-- /sign in kush -->
         driver.execute_script('window.scrollTo(0, 1666)')
         driver.sleep(uniform(2, 4))
-        print(f'\n{dct}\n{datetime.now()}')
+        print(f'\n{dct}\n{get_correct_current_time()}')
 
         __dct = dct
         __dct['players'] = data[-1]
