@@ -251,7 +251,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
 
             _select = BetControl.select().where(
                 BetControl.scaner_name == "odds_portal",
-                BetControl.put_or_not is True,
+                BetControl.put_or_not == 1,
                 BetControl.timeStart == timeStart_,
                 BetControl.players == players_,
                 BetControl.sport == sport_
