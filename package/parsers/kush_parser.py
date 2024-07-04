@@ -1,4 +1,5 @@
 import asyncio
+import time
 from ast import literal_eval
 from typing import Awaitable
 
@@ -6,6 +7,7 @@ from botasaurus import *
 
 from .helpers import *
 from package.database import *
+from datetime import datetime
 
 from dotenv import load_dotenv
 import os
@@ -59,6 +61,7 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
         # <-- /sign in kush -->
         driver.execute_script('window.scrollTo(0, 1666)')
         driver.sleep(uniform(2, 4))
+        print(f'\n{dct}\n{datetime.now()}')
 
         __dct = dct
         __dct['players'] = data[-1]
@@ -178,7 +181,7 @@ async def get_result(loop: asyncio.AbstractEventLoop, forks: list[dict]) -> None
                 res_mass.append(kush_get_result(url=url, loop=loop, proxy=proxy_kush))
 
     if res_mass:
-        for i in chunks(res_mass, 2):
+        for i in chunks(res_mass, 1):
             await asyncio.gather(*i)
 
     return None
