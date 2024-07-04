@@ -251,12 +251,13 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
 
             _select = BetControl.select().where(
                 BetControl.scaner_name == "odds_portal",
-                BetControl.put_or_not is True,
+                BetControl.put_or_not == 'yes',
                 BetControl.timeStart == timeStart_,
                 BetControl.players == players_,
                 BetControl.sport == sport_
             )
             if _select.exists():
+                print(sport_)
                 continue
             if check_null_kw(keywords) and not check_correct_keywords(
                 true_words=keywords,
@@ -277,7 +278,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
                     'timeStart': timeStart_,
                     'players': players_,
                     'bet': res_bet,
-                    'coefficient': count_coef_by_formula(coef_portal=float(_pick[-1]), user_id=_user_id, name=bettor_name),  # !!!!!!!!!!!!!
+                    'coefficient': round(count_coef_by_formula(coef_portal=float(_pick[-1]), user_id=_user_id, name=bettor_name), 2),
                     'sport': sport_
                 }
                 BetControl.create(**dct)
@@ -522,6 +523,6 @@ def make_bet(driver: AntiDetectDriver, data, dct, new_bet) -> bool:
 
 def put_predict(data: dict):
     user: BetControl = BetControl.get_or_create(**data)[0]
-    user.put_or_not = True
+    user.put_or_not = 'yes'
     user.save()
 # <-- /Kush pars helpers -->
