@@ -257,7 +257,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
                 BetControl.sport == sport_
             )
             if _select.exists():
-                print('\nExists', sport_, '\n')
+                print('\nExists', sport_, players_, '\n')
                 continue
             if check_null_kw(keywords) and not check_correct_keywords(
                 true_words=keywords,
