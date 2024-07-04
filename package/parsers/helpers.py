@@ -514,7 +514,8 @@ def make_bet(driver: AntiDetectDriver, data, dct, new_bet) -> bool:
                 driver.get_screenshot_as_file(f'all_screen/yes_{uuid4}.png')
 
                 driver.sleep(3.1415926535)
-                print('<--------  WIN  -------->\n\n\n')
+
+                print(f'<--------  WIN  -------->   {dct["players"]}\n\n\n')
                 return True
         cnt += 0.08
 
