@@ -66,6 +66,17 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
         __dct = dct
         __dct['players'] = data[-1]
         put_predict(__dct)  # added predicts
+        driver.sleep(3)
+
+        _select = BetControl.select().where(
+            BetControl.scaner_name == "odds_portal",
+            BetControl.put_or_not == 1,
+            BetControl.timeStart == __dct['timeStart_'],
+            BetControl.players == __dct['players_'],
+            BetControl.sport == __dct['sport_']
+        )
+        if _select.exists():
+            return
 
         try:
             soup: BeautifulSoup = driver.bs4()
