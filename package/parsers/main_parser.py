@@ -58,6 +58,7 @@ async def schedule():
     while True:
         # try:
             await asyncio.sleep(get_delay())
+            # await asyncio.sleep(1)
             _select: list[LinksBetters] = LinksBetters.select()
             processes: [Awaitable] = []
 
@@ -65,10 +66,10 @@ async def schedule():
                 if item.roi > 2 and item.on_off:
                     user_id = item.user_id
                     processes.append(pars_manager(item=item, user_id=user_id, loop=loop))
-                    await asyncio.sleep(0.01)
+                    await asyncio.sleep(0.1)
 
             for items in chunks(processes, 3):
-                await asyncio.sleep(0.01)
+                await asyncio.sleep(0.1)
                 await asyncio.gather(*items)
 
             await asyncio.sleep(get_delay())
