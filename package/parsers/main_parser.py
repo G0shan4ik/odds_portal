@@ -35,8 +35,6 @@ def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
         login_odds(driver=driver, url=url)
     except:
         driver.sleep(0.123456789)
-
-    driver.sleep(round(uniform(4, 7), 3))
     # <-- /LOGIN TO PORTAL -->
 
     # <-- CHECK PREDICTS -->
@@ -46,8 +44,6 @@ def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
     except:
         return []
     # <-- /CHECK PREDICTS -->
-
-    driver.save_screenshot(f'odds{uuid4()}')
 
     # <-- PARS RESULT  -->
     return pars_predicts(driver=driver, keywords=literal_eval(keywords), _user_id=_user_id, bettor_name=bettor_name)

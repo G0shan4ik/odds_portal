@@ -33,6 +33,8 @@ def get_start_url(data):
 @browser(
     user_agent=bt.UserAgent.user_agent_106,
     proxy=PROXY_RUSLAN,
+    profile="Kush",
+    reuse_driver=True,
     headless=True,
     add_arguments=['--disable-dev-shm-usage', '--no-sandbox']
 )
@@ -46,18 +48,21 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
         driver.sleep(1)
 
         # <-- sign in kush -->
-        loginButton = driver.find_element('id', 'authModalButton')
-        loginButton.click()
+        try:
+            loginButton = driver.find_element('id', 'authModalButton')
+            loginButton.click()
 
-        driver.sleep(uniform(1, 2))
+            driver.sleep(uniform(1, 2))
 
-        loginField = driver.find_element('name', 'login-form[login]')
-        loginField.send_keys(data[2])
-        passwordField = driver.find_element('name', 'login-form[password]')
-        passwordField.send_keys(data[3])
-        loginButton = driver.find_element(By.XPATH, '//button[contains(@class, "btn btn-blue")]')
-        loginButton.click()
-        driver.sleep(uniform(4, 7))
+            loginField = driver.find_element('name', 'login-form[login]')
+            loginField.send_keys(data[2])
+            passwordField = driver.find_element('name', 'login-form[password]')
+            passwordField.send_keys(data[3])
+            loginButton = driver.find_element(By.XPATH, '//button[contains(@class, "btn btn-blue")]')
+            loginButton.click()
+            driver.sleep(uniform(4, 7))
+        except:
+            driver.sleep("0.987654321")
         # <-- /sign in kush -->
         driver.execute_script('window.scrollTo(0, 1666)')
         driver.sleep(uniform(2, 4))
@@ -191,10 +196,11 @@ async def get_result(loop: asyncio.AbstractEventLoop, forks: list[dict]) -> None
                 fork["players"] = player
                 url = f'https://kushvsporte.ru/site/search?q={player}#{fork}#{login_kush}#{pass_kush}#{ang_pl}'
                 await asyncio.sleep(uniform(1, 2))
-                res_mass.append(kush_get_result(url=url, loop=loop, proxy=proxy_kush))
+                # res_mass.append(kush_get_result(url=url, loop=loop, proxy=proxy_kush))
+                await kush_get_result(url=url, loop=loop, proxy=proxy_kush)
 
-    if res_mass:
-        for i in chunks(res_mass, 1):
-            await asyncio.gather(*i)
+    # if res_mass:
+    #     for i in chunks(res_mass, 1):
+    #         await asyncio.gather(*i)
 
     return None

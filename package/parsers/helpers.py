@@ -98,7 +98,7 @@ def convert_date(date_str: str) -> str:
 # <-- Pars helpers -->
 def login_odds(driver: AntiDetectDriver, url: str) -> AntiDetectDriver:
     driver.get(url)
-    driver.sleep(5)
+    driver.sleep(3)
     try:
         driver.click('div.loginModalBtn')
     except:
@@ -110,6 +110,7 @@ def login_odds(driver: AntiDetectDriver, url: str) -> AntiDetectDriver:
     driver.find_element(By.CSS_SELECTOR, 'input#login-password-sign-m.int-text.border-box.border-black-main').send_keys(odds_pass)
     driver.sleep(1)
     driver.click('input.font-secondary.text-black-main.orange-button-gradient')
+    driver.sleep(round(uniform(4, 7), 3))
 
     return driver
 
@@ -276,7 +277,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
                     'scaner_name': 'odds_portal',
                     'bettors_name': bettor_name,
                     'timeStart': timeStart_,
-                    'players': players_,
+                    'players': players_.replace('(Ger)', '').replace('/', " "),
                     'bet': res_bet,
                     'coefficient': round(count_coef_by_formula(coef_portal=float(_pick[-1]), user_id=_user_id, name=bettor_name), 2),
                     'sport': sport_
@@ -469,13 +470,13 @@ def choose_true_bet(driver: AntiDetectDriver, data, idx):
     move.click_and_hold(slider).move_by_offset(-70, 0).release().perform()
     last_btn = driver.find_element(By.CSS_SELECTOR, 'button#add-bet-coupon.btn.btn-blue.w-100.mb-2')
 
-    driver.sleep(3)
-    driver.get_screenshot_as_file(f'all_screen/no_{uuid4}.png')
+    # driver.sleep(3)
+    # driver.get_screenshot_as_file(f'all_screen/no_{uuid4}.png')
 
     last_btn.click()
 
-    driver.sleep(3)
-    driver.get_screenshot_as_file(f'all_screen/yes_{uuid4}.png')
+    # driver.sleep(3)
+    # driver.get_screenshot_as_file(f'all_screen/yes_{uuid4}.png')
 
     driver.sleep(3.1415926535)
     print('<--------  WIN  -------->\n\n\n')
