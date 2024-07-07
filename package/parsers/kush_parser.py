@@ -69,9 +69,9 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
         _select = BetControl.select().where(
             BetControl.scaner_name == "odds_portal",
             BetControl.put_or_not == 1,
-            BetControl.timeStart == __dct['timeStart_'],
-            BetControl.players == __dct['players_'],
-            BetControl.sport == __dct['sport_']
+            BetControl.timeStart == __dct['timeStart'],
+            BetControl.players == __dct['players'],
+            BetControl.sport == __dct['sport']
         )
         if _select.exists():
             return
