@@ -52,8 +52,8 @@ def check_command(str1: str, str2: str) -> bool:
     str1 = str1.lower().replace('(жен)', '').replace(' ', '')
     str2 = str2.lower().replace('(ж)', '').replace(' ', '')
     return True if (
-            float(f"{levenshtein_similarity(str1, str2):.2f}") >= 0.67 or
-            float(f"{jaccard_similarity(str1, str2):.2f}") >= 0.5
+            float(f"{levenshtein_similarity(str1, str2):.2f}") >= 0.45 or
+            float(f"{jaccard_similarity(str1, str2):.2f}") >= 0.3
     ) else False
 
 
