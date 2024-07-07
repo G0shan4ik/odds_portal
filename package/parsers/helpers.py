@@ -363,7 +363,7 @@ def check_command_2(kush_cm, bet_cm) -> bool:
         if i in new_kush:
             cnt += 1
 
-    if cnt > 2:
+    if cnt >= 1:
         return True
     return False
 
