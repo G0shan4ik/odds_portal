@@ -11,6 +11,7 @@ from .kush_parser import get_result
 from dotenv import load_dotenv
 import os
 
+from uuid import uuid4
 
 load_dotenv()
 
@@ -45,6 +46,8 @@ def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
     except:
         return []
     # <-- /CHECK PREDICTS -->
+
+    driver.save_screenshot(f'odds{uuid4()}')
 
     # <-- PARS RESULT  -->
     return pars_predicts(driver=driver, keywords=literal_eval(keywords), _user_id=_user_id, bettor_name=bettor_name)
