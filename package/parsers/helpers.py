@@ -103,7 +103,7 @@ def login_odds(driver: AntiDetectDriver, url: str) -> AntiDetectDriver:
         driver.click('div.loginModalBtn')
     except:
         driver.refresh()
-        driver.sleep(10)
+        driver.sleep(5)
         driver.click('div.loginModalBtn')
     driver.sleep(5)
     driver.find_element(By.CSS_SELECTOR, 'input#login-username-sign.int-text.border-box.border-black-main').send_keys(odds_login)

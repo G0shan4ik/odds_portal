@@ -14,14 +14,17 @@ import os
 
 load_dotenv()
 
-PROXY_ODDS = os.getenv('PROXY_ODDS')
+# PROXY_ODDS = os.getenv('PROXY_ODDS')
+PROXY_EGOR = os.getenv('PROXY_EGOR')
 
 
 @browser(
     user_agent=bt.UserAgent.user_agent_106,
-    proxy=PROXY_ODDS,
+    proxy=PROXY_EGOR,
     headless=True,
     add_arguments=['--disable-dev-shm-usage', '--no-sandbox'],
+    profile='Odds',
+    reuse_driver=True
 )
 def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
     url, keywords, _user_id, bettor_name = data.split('#')
@@ -30,13 +33,16 @@ def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
     try:
         login_odds(driver=driver, url=url)
     except:
-        driver.sleep(5)
-        return []
+        driver.sleep(0.123456789)
+
     driver.sleep(round(uniform(4, 7), 3))
     # <-- /LOGIN TO PORTAL -->
 
     # <-- CHECK PREDICTS -->
-    if not check_predicts(driver=driver):
+    try:
+        if not check_predicts(driver=driver):
+            return []
+    except:
         return []
     # <-- /CHECK PREDICTS -->
 
