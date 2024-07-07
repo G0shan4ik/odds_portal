@@ -24,7 +24,7 @@ PROXY_EGOR = os.getenv('PROXY_EGOR')
     proxy=PROXY_EGOR,
     headless=True,
     add_arguments=['--disable-dev-shm-usage', '--no-sandbox'],
-    profile='Odds',
+    # profile='Odds',
     reuse_driver=True
 )
 def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:

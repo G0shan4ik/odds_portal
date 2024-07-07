@@ -33,7 +33,7 @@ def get_start_url(data):
 @browser(
     user_agent=bt.UserAgent.user_agent_106,
     proxy=PROXY_RUSLAN,
-    profile="Kush",
+    # profile="Kush",
     reuse_driver=True,
     headless=True,
     add_arguments=['--disable-dev-shm-usage', '--no-sandbox']
