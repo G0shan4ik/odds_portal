@@ -64,6 +64,7 @@ async def pars_manager(item: LinksBetters, user_id: int, loop: asyncio.AbstractE
 
 async def schedule():
     loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
+    print('\n\n\n<-- Start -->\n\n')
     while True:
         # try:
             await asyncio.sleep(get_delay())
