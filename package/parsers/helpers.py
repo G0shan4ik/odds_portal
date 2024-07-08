@@ -316,15 +316,15 @@ def get_delay() -> int:
     night_time = datetime.strptime("00:00", "%H:%M").time()
 
     if morning_time <= current_time <= morning_time2:
-        delay = 60
-    elif morning_time2 <= current_time <= day_time:
         delay = 90
+    elif morning_time2 <= current_time <= day_time:
+        delay = 120
     elif day_time <= current_time <= evening_time:
-        delay = 150
+        delay = 180
     elif evening_time <= current_time <= evening_time2:
-        delay = 240
+        delay = 260
     elif night_time <= current_time <= morning_time:
-        delay = 360
+        delay = 400
 
     return delay
 # < /Pars helpers -->
