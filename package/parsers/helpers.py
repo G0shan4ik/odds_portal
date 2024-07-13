@@ -164,7 +164,7 @@ def get_pick_coefficient(card: BeautifulSoup) -> list:
 
 
 def check_correct_keywords(true_words: list[list], predicted_words: list[str], descr_ods_bet: str) -> bool:
-    print(true_words, predicted_words, descr_ods_bet, sep=' --- ')
+    # print(true_words, predicted_words, descr_ods_bet, sep=' --- ')
     flag = True
     for group in true_words:
         fl = True
@@ -213,7 +213,7 @@ def translate_bet_to_kush(bet: str, descr_ods_bet: str):
 
 
 def making_bet(bet: str, descr_ods_bet: str, sport: str) -> str:
-    print(f'\nBet: {bet}\nOdds_bet: {descr_ods_bet}\n')
+    # print(f'\nBet: {bet}\nOdds_bet: {descr_ods_bet}\n')
     if 'Half' in descr_ods_bet:
         print(sport)
         period = descr_ods_bet.strip().replace(r'\n', '').split(' ')[1][0]
@@ -316,15 +316,15 @@ def get_delay() -> int:
     night_time = datetime.strptime("00:00", "%H:%M").time()
 
     if morning_time <= current_time <= morning_time2:
-        delay = 90
+        delay = 100
     elif morning_time2 <= current_time <= day_time:
-        delay = 120
+        delay = 150
     elif day_time <= current_time <= evening_time:
-        delay = 180
+        delay = 200
     elif evening_time <= current_time <= evening_time2:
-        delay = 260
+        delay = 270
     elif night_time <= current_time <= morning_time:
-        delay = 400
+        delay = 450
 
     return delay
 # < /Pars helpers -->
