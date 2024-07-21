@@ -17,6 +17,7 @@ import Levenshtein
 from selenium.webdriver.common.by import By
 
 from package.database import BetControl, LinksBetters
+from package.odd_bot.core import bot_
 
 
 load_dotenv()
@@ -26,6 +27,20 @@ odds_login = os.getenv('odds_login')
 
 
 # <-- Helpers -->
+async def sender(dct, _user):
+
+    await bot_.send_message(
+        chat_id=_user,
+        text=f'''
+Время и дата: {dct['timeStart']}
+Команды игроков: {dct['players']}
+Ставка: {dct['bet'][0]}
+Коэффицент: {dct['coefficient']}
+Вид спорта: {dct['sport']}
+        ''',
+    )
+
+
 def check_null_kw(keywords: list[list]) -> bool:
     if len(keywords) == 1:
         return True if keywords[0] else False
@@ -215,7 +230,6 @@ def translate_bet_to_kush(bet: str, descr_ods_bet: str):
 def making_bet(bet: str, descr_ods_bet: str, sport: str) -> str:
     # print(f'\nBet: {bet}\nOdds_bet: {descr_ods_bet}\n')
     if 'Half' in descr_ods_bet:
-        print(sport)
         period = descr_ods_bet.strip().replace(r'\n', '').split(' ')[1][0]
         if sport.lower() == 'футбол':
             return f'!{period}-й тайм {translate_bet_to_kush(bet, descr_ods_bet)}'
@@ -252,7 +266,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
 
             _select = BetControl.select().where(
                 BetControl.scaner_name == "odds_portal",
-                BetControl.put_or_not == 1,
+                # BetControl.put_or_not == 1,
                 BetControl.timeStart == timeStart_,
                 BetControl.players == players_,
                 BetControl.sport == sport_
@@ -278,7 +292,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
                     'bettors_name': bettor_name,
                     'timeStart': timeStart_,
                     'players': players_.replace('(Ger)', '').replace('/', " "),
-                    'bet': res_bet,
+                    'bet': [card.select_one('span.text-gray-dark').text, res_bet],  # res_bet,
                     'coefficient': round(count_coef_by_formula(coef_portal=float(_pick[-1]), user_id=_user_id, name=bettor_name), 2),
                     'sport': sport_
                 }
@@ -291,6 +305,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
             print(f'\n\n<-- EXEPTION not full card {ex}\n\n')
 
     print(f'\n<-- LEN MASS({bettor_name}) == {len(result)} -->\n')
+    print(result)
     return result
 
 

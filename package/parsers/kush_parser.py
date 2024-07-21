@@ -34,7 +34,6 @@ def get_start_url(data):
     user_agent=bt.UserAgent.user_agent_106,
     proxy=PROXY_RUSLAN,
     # profile="Kush",
-    reuse_driver=True,
     headless=True,
     add_arguments=['--disable-dev-shm-usage', '--no-sandbox']
 )
@@ -194,6 +193,7 @@ async def get_result(loop: asyncio.AbstractEventLoop, forks: list[dict]) -> None
                     player = text_translator(text=player)
                 ang_pl = fork["players"]
                 fork["players"] = player
+
                 url = f'https://kushvsporte.ru/site/search?q={player}#{fork}#{login_kush}#{pass_kush}#{ang_pl}'
                 await asyncio.sleep(uniform(1, 2))
                 # res_mass.append(kush_get_result(url=url, loop=loop, proxy=proxy_kush))
