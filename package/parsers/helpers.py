@@ -28,17 +28,18 @@ odds_login = os.getenv('odds_login')
 
 # <-- Helpers -->
 async def sender(dct, _user):
-
-    await bot_.send_message(
-        chat_id=_user,
-        text=f'''
-Время и дата: {dct['timeStart']}
-Команды игроков: {dct['players']}
-Ставка: {dct['bet'][0]}
-Коэффицент: {dct['coefficient']}
-Вид спорта: {dct['sport']}
-        ''',
-    )
+    for id_ in [_user, 749654188]:
+        await bot_.send_message(
+            chat_id=id_,
+            text=f'''
+by {dct['bettors_name']}
+{dct['players']} {dct['bet'][0]} ({dct['sp_tg']})
+\t\t\t{dct['timeStart']}
+\t\t\t{dct['country']}
+\t\t\todds: {dct['coef_tg']}
+min {dct['coefficient']} - (Уже учитывая формулу)
+            ''',
+        )
 
 
 def check_null_kw(keywords: list[list]) -> bool:
@@ -256,6 +257,21 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
 
             _pick: list = get_pick_coefficient(card=card)
 
+            # <- ->
+            X = [item.text for item in card.select(
+                'div.border-black-borders.flex.min-h-\[30px\].min-w-\[60px\].items-center.justify-center.border-l')]
+            coefficient = [item.text for item in card.select(
+                'div.border-black-borders.flex.min-w-\[60px\].flex-col.items-center.justify-center.gap-1.border-l.pb-1.pt-1')]
+            pick_x = dict(zip(X, coefficient))
+
+            res_s = []
+            for item in [k for v, k in pick_x.items()]:
+                if 'PICK' in item:
+                    res_s.append(f"{item.split('%')[0]} (PICK)")
+                else:
+                    res_s.append(f"{item.split('%')[0]}")
+            # <- ->
+
             timeStart_ = convert_date(card.select_one('div.dropping-mt\:\!flex-row').text.replace(
                 card.select_one('span.text-gray-dark').text, ''
             ))
@@ -285,6 +301,8 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
                 continue
 
             try:
+                _lnk = card.select_one('a.flex.w-full').get('href')
+                drt_country = list(map(lambda i: i.title().replace('-', ' '), _lnk.split('/')[2:4]))
 
                 dct = {
                     'eg_or_rus': 'ruslan',
@@ -292,9 +310,13 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
                     'bettors_name': bettor_name,
                     'timeStart': timeStart_,
                     'players': players_.replace('(Ger)', '').replace('/', " "),
-                    'bet': [card.select_one('span.text-gray-dark').text, res_bet],  # res_bet,
+                    'bet': res_bet,  # res_bet,
                     'coefficient': round(count_coef_by_formula(coef_portal=float(_pick[-1]), user_id=_user_id, name=bettor_name), 2),
-                    'sport': sport_
+                    'sport': sport_,
+                    'sp_tg': card.select_one('div.flex').text.split('/')[0],
+                    'coef_tg': " - ".join(res_s),
+                    'lnk': f"https://www.oddsportal.com{_lnk}",
+                    'country': f"{drt_country[0]} ({drt_country[1]})"
                 }
                 BetControl.create(**dct)
             except Exception as ex:

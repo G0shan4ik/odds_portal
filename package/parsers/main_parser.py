@@ -56,7 +56,6 @@ async def pars_manager(item: LinksBetters, user_id: int, loop: asyncio.AbstractE
     if data:
         for item in data:
             await sender(item, user_id)
-            item['bet'] = item['bet'][-1]
 
         await get_result(loop=loop, forks=data)
 
