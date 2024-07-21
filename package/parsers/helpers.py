@@ -208,21 +208,21 @@ def count_coef_by_formula(user_id: int, name: str, coef_portal: float) -> float:
 
 
 def translate_bet_to_kush(bet: str, descr_ods_bet: str):
-    # if 'O/U' in descr_ods_bet:
-    #     return 'тб' if bet == 'Over' else 'тм'
+    if 'O/U' in descr_ods_bet:
+        return 'тб' if bet == 'Over' else 'тм'
     if '1X2' in descr_ods_bet or 'H/A' in descr_ods_bet:  # or 'DC' in descr_ods_bet
         return bet.lower()
-    # elif 'DNB' in descr_ods_bet:
-    #     return 'ф1' if bet == '1' else 'ф2'
+    elif 'DNB' in descr_ods_bet:
+        return 'ф1' if bet == '1' else 'ф2'
     elif 'BTS' in descr_ods_bet:
         return 'Обе забьют Нет' if bet.lower() == 'no' else 'Обе забьют Да'
-    # elif 'AH' in descr_ods_bet:
-    #     if '-' in descr_ods_bet:
-    #         return bet if bet.lower() == '1' else 'x2'
-    #     elif '+' in descr_ods_bet:
-    #         return '1x' if bet.lower() == '1' else '2'
-    #     else:
-    #         return f'ф{bet}'
+    elif 'AH' in descr_ods_bet:
+        if '-' in descr_ods_bet:
+            return bet if bet.lower() == '1' else 'x2'
+        elif '+' in descr_ods_bet:
+            return '1x' if bet.lower() == '1' else '2'
+        else:
+            return f'ф{bet}'
     else:
         return 'stop'
 
