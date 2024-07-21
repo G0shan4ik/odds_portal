@@ -8,7 +8,7 @@ import os
 
 load_dotenv()
 
-TOKEN_API = os.getenv('test_bot')
+TOKEN_API = os.getenv('TOKEN_API')
 ADMIN_ID = os.getenv('ADMIN_ID')
 
 bot_ = Bot(
