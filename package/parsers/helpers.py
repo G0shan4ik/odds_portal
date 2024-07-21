@@ -28,7 +28,7 @@ odds_login = os.getenv('odds_login')
 
 # <-- Helpers -->
 async def sender(dct, _user):
-    for id_ in [_user, 749654188]:
+    for id_ in [749654188]:  # _user,
         await bot_.send_message(
             chat_id=id_,
             text=f'''
@@ -38,6 +38,7 @@ by {dct['bettors_name']}
 \t\t\t{dct['country']}
 \t\t\todds: {dct['coef_tg']}
 min {dct['coefficient']} - (Уже учитывая формулу)
+{dct['lnk']}
             ''',
         )
 
@@ -275,7 +276,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
             timeStart_ = convert_date(card.select_one('div.dropping-mt\:\!flex-row').text.replace(
                 card.select_one('span.text-gray-dark').text, ''
             ))
-            players_ = card.select_one('div.max-mt\:pl-1.flex.w-full.min-w-0.flex-col.gap-1').text
+            players_ = card.select_one('div.max-mt\:pl-1.flex.w-full.min-w-0.flex-col.gap-1').text.replace('(Ger)', '').replace('/', " ")
             sport_ = text_translator(card.select_one('div.flex').text.split('/')[0])
             if re.search(r"[a-zA-Z]", sport_):
                 sport_ = text_translator(text=sport_)
@@ -309,7 +310,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
                     'scaner_name': 'odds_portal',
                     'bettors_name': bettor_name,
                     'timeStart': timeStart_,
-                    'players': players_.replace('(Ger)', '').replace('/', " "),
+                    'players': players_,
                     'bet': res_bet,  # res_bet,
                     'coefficient': round(count_coef_by_formula(coef_portal=float(_pick[-1]), user_id=_user_id, name=bettor_name), 2),
                     'sport': sport_,
@@ -319,6 +320,7 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
                     'country': f"{drt_country[0]} ({drt_country[1]})"
                 }
                 BetControl.create(**dct)
+                print(dct)
             except Exception as ex:
                 print(f'<-- DCT RESULT PARSER ERR: \n {ex}')
                 continue
@@ -327,7 +329,6 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
             print(f'\n\n<-- EXEPTION not full card {ex}\n\n')
 
     print(f'\n<-- LEN MASS({bettor_name}) == {len(result)} -->\n')
-    print(result)
     return result
 
 
