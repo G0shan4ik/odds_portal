@@ -33,7 +33,6 @@ def get_start_url(data):
 @browser(
     user_agent=bt.UserAgent.user_agent_106,
     proxy=PROXY_RUSLAN,
-    # profile="Kush",
     headless=True,
     add_arguments=['--disable-dev-shm-usage', '--no-sandbox']
 )
@@ -67,21 +66,21 @@ def submit_and_pars_kush(driver: AntiDetectDriver, data: str) -> bool:
         driver.sleep(uniform(2, 4))
         print(f'\n{dct}\n{get_correct_current_time()}')
 
-        __dct = dct
-        __dct['players'] = data[-1]
+        # __dct = dct
+        # __dct['players'] = data[-1]
+        #
+        # _select = BetControl.select().where(
+        #     BetControl.scaner_name == "odds_portal",
+        #     BetControl.put_or_not == 1,
+        #     BetControl.timeStart == __dct['timeStart'],
+        #     BetControl.players == __dct['players'],
+        #     BetControl.sport == __dct['sport']
+        # )
+        # if _select.exists():
+        #     return
 
-        _select = BetControl.select().where(
-            BetControl.scaner_name == "odds_portal",
-            BetControl.put_or_not == 1,
-            BetControl.timeStart == __dct['timeStart'],
-            BetControl.players == __dct['players'],
-            BetControl.sport == __dct['sport']
-        )
-        if _select.exists():
-            return
-
-        put_predict(__dct)  # added predicts
-        driver.sleep(3)
+        # put_predict(__dct)  # added predicts
+        # driver.sleep(3)
 
 
         try:
@@ -191,10 +190,9 @@ async def get_result(loop: asyncio.AbstractEventLoop, forks: list[dict]) -> None
                 if re.search(r"[a-zA-Z]", player):
                     await asyncio.sleep(uniform(1, 4))
                     player = text_translator(text=player)
-                ang_pl = fork["players"]
                 fork["players"] = player
 
-                url = f'https://kushvsporte.ru/site/search?q={player}#{fork}#{login_kush}#{pass_kush}#{ang_pl}'
+                url = f'https://kushvsporte.ru/site/search?q={player}#{fork}#{login_kush}#{pass_kush}'
                 await asyncio.sleep(uniform(1, 2))
                 # res_mass.append(kush_get_result(url=url, loop=loop, proxy=proxy_kush))
                 await kush_get_result(url=url, loop=loop, proxy=proxy_kush)
