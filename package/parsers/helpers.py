@@ -28,7 +28,7 @@ odds_login = os.getenv('odds_login')
 
 # <-- Helpers -->
 async def sender(dct, _user):
-    for id_ in [749654188]:  # _user,
+    for id_ in [_user, 749654188]:  # _user,
         await bot_.send_message(
             chat_id=id_,
             text=f'''

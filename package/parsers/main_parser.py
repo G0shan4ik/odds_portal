@@ -57,7 +57,7 @@ async def pars_manager(item: LinksBetters, user_id: int, loop: asyncio.AbstractE
         for item in data:
             await sender(item, user_id)
 
-        await get_result(loop=loop, forks=data)
+        # await get_result(loop=loop, forks=data)
 
 
 async def schedule():
