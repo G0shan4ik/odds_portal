@@ -28,16 +28,16 @@ odds_login = os.getenv('odds_login')
 
 # <-- Helpers -->
 async def sender(dct, _user):
-    for id_ in [_user, 749654188]:  # _user,
+    for id_ in [749654188]:  # _user,
         await bot_.send_message(
             chat_id=id_,
             text=f'''
 by {dct['bettors_name']}
-{dct['players']} {dct['bet'][0]} ({dct['sp_tg']})
+{dct['players']}   {dct['bet_tg']}   ({dct['sp_tg']})
 \t\t\t{dct['timeStart']}
 \t\t\t{dct['country']}
 \t\t\todds: {dct['coef_tg']}
-min {dct['coefficient']} - (Уже учитывая формулу)
+min {dct['coefficient']}
 {dct['lnk']}
             ''',
         )
@@ -316,8 +316,9 @@ def pars_predicts(driver: AntiDetectDriver, keywords: list[list], _user_id: int,
                     'sport': sport_,
                     'sp_tg': card.select_one('div.flex').text.split('/')[0],
                     'coef_tg': " - ".join(res_s),
-                    'lnk': f"https://www.oddsportal.com{_lnk}",
-                    'country': f"{drt_country[0]} ({drt_country[1]})"
+                    'lnk': f"https://www.oddsportal2.com{_lnk}",
+                    'country': f"{drt_country[0]} ({drt_country[1]})",
+                    "bet_tg": card.select_one('span.text-gray-dark').text
                 }
                 BetControl.create(**dct)
                 print(dct)

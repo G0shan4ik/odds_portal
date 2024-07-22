@@ -24,7 +24,6 @@ PROXY_EGOR = os.getenv('PROXY_EGOR')
     proxy=PROXY_EGOR,
     headless=True,
     add_arguments=['--disable-dev-shm-usage', '--no-sandbox'],
-    # profile='Odds',
 )
 def pars_odds(driver: AntiDetectDriver, data: str) -> list[dict]:
     url, keywords, _user_id, bettor_name = data.split('#')
@@ -56,6 +55,11 @@ async def pars_manager(item: LinksBetters, user_id: int, loop: asyncio.AbstractE
     if data:
         for item in data:
             await sender(item, user_id)
+            del item['bet_tg']
+            del item['sp_tg']
+            del item['lnk']
+            del item['country']
+            del item['coef_tg']
 
         await get_result(loop=loop, forks=data)
 
@@ -65,7 +69,7 @@ async def schedule():
     while True:
             loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
         # try:
-            await asyncio.sleep(get_delay())
+        #     await asyncio.sleep(get_delay())
             # await asyncio.sleep(  1)
             _select: list[LinksBetters] = LinksBetters.select()
             processes: [Awaitable] = []

@@ -43,7 +43,7 @@ async def state_add_nickname(message: Message, state: FSMContext):
         await message.answer(text=WRONG_BETTORS_NAME(_name), reply_markup=exit_kb())
         return
 
-    _link = f'https://www.oddsportal.com/profile/{_name}/my-predictions/next/'
+    _link = f'https://www.oddsportal2.com/profile/{_name}/my-predictions/next/'
     if not save_data_to_database(_user_id=message.from_user.id, nickname=_name, link=_link):
         await message.answer(text=WRONG_TEXT)
         return
